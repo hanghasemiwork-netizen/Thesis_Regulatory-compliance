@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://standards.buildingsmart.org/IDS
+     http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+  <info>
+    <title>RT-SCIE / DL163 model information requirements</title>
+    <copyright>University of Minho / TopBIM</copyright>
+    <version>1.1</version>
+    <description>Model information requirements gating the RT-SCIE Art.57
+    evacuation travel-distance check and the DL163/2006 ramp accessibility
+    check. Validated with buildingSMART IfcTester.</description>
+    <author>hanieh@alunos.uminho.pt</author>
+    <date>2026-09-05</date>
+    <purpose>Design-stage fire-safety and accessibility compliance gate</purpose>
+  </info>
+
+  <specifications>
+
+    <!-- IDS-01: model schema must be IFC4 (SCIE + DL163, hard-stop, both
+         domains). IFCPROJECT is used as the applicability entity because
+         it is mandatory in every valid IFC file regardless of what the
+         model otherwise contains, so this specification tests schema
+         version alone rather than depending on IfcSpace/IfcDoor/IfcRamp
+         being present at all. Every specification below also carries
+         ifcVersion="IFC4", so a schema mismatch is in fact caught by
+         all of them (see ids_validator.py's is_ifc_version check) — this
+         entry exists to give that gate its own dedicated, always-first
+         check id, rather than only surfacing as a side effect of
+         whichever other specification happens to run first. -->
+    <specification name="IDS-01: IFC4 schema"
+                   ifcVersion="IFC4"
+                   identifier="IDS-01"
+                   description="Model schema must be IFC4 (IFC4 Reference View export required).">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCPROJECT</simpleValue></name>
+        </entity>
+      </applicability>
+      <requirements>
+        <entity>
+          <name><simpleValue>IFCPROJECT</simpleValue></name>
+        </entity>
+      </requirements>
+    </specification>
+
+    <!-- IDS-02: at least one IfcSpace must exist (SCIE, hard-stop) -->
+    <specification name="IDS-02: At least one IfcSpace"
+                   ifcVersion="IFC4"
+                   identifier="IDS-02"
+                   description="Rooms must be exported as IfcSpace for the evacuation check to have anything to check.">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCSPACE</simpleValue></name>
+        </entity>
+      </applicability>
+      <requirements>
+        <entity>
+          <name><simpleValue>IFCSPACE</simpleValue></name>
+        </entity>
+      </requirements>
+    </specification>
+
+    <!-- IDS-03: at least one IfcDoor with FireExit=YES (SCIE, hard-stop) -->
+    <specification name="IDS-03: Fire exit door"
+                   ifcVersion="IFC4"
+                   identifier="IDS-03"
+                   description="At least one door must be tagged FireExit = Yes, marking the evacuation target for the travel-distance check.">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCDOOR</simpleValue></name>
+        </entity>
+        <property dataType="IFCBOOLEAN">
+          <propertySet><simpleValue>Pset_DoorCommon</simpleValue></propertySet>
+          <baseName><simpleValue>FireExit</simpleValue></baseName>
+          <value><simpleValue>TRUE</simpleValue></value>
+        </property>
+      </applicability>
+      <requirements>
+        <entity>
+          <name><simpleValue>IFCDOOR</simpleValue></name>
+        </entity>
+      </requirements>
+    </specification>
+
+    <!-- IDS-04: at least one IfcRamp (DL163, hard-stop for that domain only) -->
+    <specification name="IDS-04: At least one IfcRamp"
+                   ifcVersion="IFC4"
+                   identifier="IDS-04"
+                   description="At least one ramp must be present for the DL163 accessibility check to run.">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCRAMP</simpleValue></name>
+        </entity>
+      </applicability>
+      <requirements>
+        <entity>
+          <name><simpleValue>IFCRAMP</simpleValue></name>
+        </entity>
+      </requirements>
+    </specification>
+
+    <!-- IDS-05: every IfcSpace should carry a LongName (SCIE, warning only —
+         does not gate the evacuation check, just flags rooms the architect
+         has not yet named so they are easy to find and fix). -->
+    <specification name="IDS-05: Space LongName"
+                   ifcVersion="IFC4"
+                   identifier="IDS-05"
+                   description="Every space should carry a LongName so it can be identified by its function in reports and floor plans.">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCSPACE</simpleValue></name>
+        </entity>
+      </applicability>
+      <requirements>
+        <attribute cardinality="required">
+          <name><simpleValue>LongName</simpleValue></name>
+        </attribute>
+      </requirements>
+    </specification>
+
+    <!-- IDS-06: no IfcSpace should carry non_occupiable = Yes (SCIE,
+         warning only). Such spaces are excluded from the Art.57
+         evacuation-distance check (see ifc_parser.extract_all); flagged
+         here so that exclusion is a reviewed decision, not silently
+         missed. propertySet is fixed to "Other" — the Pset this
+         project's model export puts non_occupiable in — rather than a
+         wildcard: ifctester's Property facet requires the property in
+         EVERY Pset a wildcard matches (not just one that has it), so a
+         true "any Pset" match silently breaks the moment the element
+         carries any other Pset without the property, which every real
+         IfcSpace does. The report/visualization warning (main.py) is the
+         authoritative check — it uses this project's own any-Pset search
+         (ifc_parser.get_property) and catches the flag regardless of
+         which Pset it lives in; this IDS spec is a best-effort schema
+         gate for the common case. -->
+    <specification name="IDS-06: Space marked non_occupiable"
+                   ifcVersion="IFC4"
+                   identifier="IDS-06"
+                   description="Spaces tagged non_occupiable = Yes are excluded from the Art.57 evacuation-distance check; flagged so the exclusion is reviewed, not silently missed.">
+      <applicability>
+        <entity>
+          <name><simpleValue>IFCSPACE</simpleValue></name>
+        </entity>
+      </applicability>
+      <requirements>
+        <property cardinality="prohibited" dataType="IFCBOOLEAN">
+          <propertySet><simpleValue>Other</simpleValue></propertySet>
+          <baseName><simpleValue>non_occupiable</simpleValue></baseName>
+          <value><simpleValue>TRUE</simpleValue></value>
+        </property>
+      </requirements>
+    </specification>
+
+  </specifications>
+</ids>

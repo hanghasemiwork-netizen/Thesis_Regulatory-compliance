@@ -1,0 +1,31 @@
+{
+  "regulation": "DL 163/2006 — Accessibility Portugal",
+  "version": "1.0",
+  "DL163": {
+    "ramp": {
+      "id": "DL163-RAMP-2.5.1",
+      "article": "Anexo 2.5.1",
+      "description": "Ramps on the accessible route: slope, rise and horizontal projection must satisfy one of the paired limits (interpolated between them).",
+      "anchors": [
+        {
+          "slope_pct": 6.0,
+          "max_rise_m": 0.6,
+          "max_projection_m": 10.0
+        },
+        {
+          "slope_pct": 8.0,
+          "max_rise_m": 0.4,
+          "max_projection_m": 5.0
+        }
+      ],
+      "absolute_max_slope_pct": 8.0,
+      "width_check": {
+        "enabled": true,
+        "article": "Anexo 2.5.4",
+        "min_width_m": 1.2,
+        "min_width_short_ramp_m": 0.9,
+        "short_ramp_projection_m": 5.0
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "SCIE": {
+    "GENERAL": {
+      "id": "SCIE-ART57-GENERAL",
+      "article": "Art. 57 RT-SCIE (Portaria 1532/2008, amended by Portaria 135/2020)",
+      "description": "General quantitative baseline: maximum evacuation travel distance from the most remote point of any occupiable space to the nearest fire exit. Use-type refinements are not implemented in this version.",
+      "dead_end_max_m": 15,
+      "two_exits_max_m": 30
+    }
+  }
+}
